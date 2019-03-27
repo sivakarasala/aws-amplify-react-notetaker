@@ -1,68 +1,108 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+type Note {
+id: ID!
+note: String!
+}
 
-## Available Scripts
+enum ModelSortDirection {
+ASC
+DESC
+}
 
-In the project directory, you can run:
+type ModelNoteConnection {
+items: [Note]
+nextToken: String
+}
 
-### `npm start`
+input ModelStringFilterInput {
+ne: String
+eq: String
+le: String
+lt: String
+ge: String
+gt: String
+contains: String
+notContains: String
+between: [String]
+beginsWith: String
+}
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+input ModelIDFilterInput {
+ne: ID
+eq: ID
+le: ID
+lt: ID
+ge: ID
+gt: ID
+contains: ID
+notContains: ID
+between: [ID]
+beginsWith: ID
+}
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+input ModelIntFilterInput {
+ne: Int
+eq: Int
+le: Int
+lt: Int
+ge: Int
+gt: Int
+contains: Int
+notContains: Int
+between: [Int]
+}
 
-### `npm test`
+input ModelFloatFilterInput {
+ne: Float
+eq: Float
+le: Float
+lt: Float
+ge: Float
+gt: Float
+contains: Float
+notContains: Float
+between: [Float]
+}
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+input ModelBooleanFilterInput {
+ne: Boolean
+eq: Boolean
+}
 
-### `npm run build`
+input ModelNoteFilterInput {
+id: ModelIDFilterInput
+note: ModelStringFilterInput
+and: [ModelNoteFilterInput]
+or: [ModelNoteFilterInput]
+not: ModelNoteFilterInput
+}
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+type Query {
+getNote(id: ID!): Note
+listNotes(filter: ModelNoteFilterInput, limit: Int, nextToken: String): ModelNoteConnection
+}
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+input CreateNoteInput {
+id: ID
+note: String!
+}
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+input UpdateNoteInput {
+id: ID!
+note: String
+}
 
-### `npm run eject`
+input DeleteNoteInput {
+id: ID
+}
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+type Mutation {
+createNote(input: CreateNoteInput!): Note
+updateNote(input: UpdateNoteInput!): Note
+deleteNote(input: DeleteNoteInput!): Note
+}
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+type Subscription {
+onCreateNote: Note @aws_subscribe(mutations: ["createNote"])
+onUpdateNote: Note @aws_subscribe(mutations: ["updateNote"])
+onDeleteNote: Note @aws_subscribe(mutations: ["deleteNote"])
+}
